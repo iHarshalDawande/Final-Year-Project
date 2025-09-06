@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Residential Gate Management - Voice Chatbot System</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <title>Smart Residential Gate Management System</title>
     <style>
         * {
             margin: 0;
@@ -16,470 +15,284 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .container {
-            width: 100%;
-            max-width: 1400px;
-            margin: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
-            color: white;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
-            text-align: center;
-            position: relative;
         }
 
-        .header h1 {
+        .system-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .system-header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
 
-        .header p {
+        .system-header p {
             font-size: 1.1rem;
             opacity: 0.9;
         }
 
-        .system-status {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .main-interface {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .kiosk-panel, .resident-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .panel-header h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .security-status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
         }
 
         .status-indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #2ecc71;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-            min-height: 800px;
-        }
-
-        .gate-section {
-            background: #ecf0f1;
-            padding: 30px;
-            border-right: 1px solid #bdc3c7;
-        }
-
-        .resident-section {
-            background: #f8f9fa;
-            padding: 30px;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            color: #2c3e50;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .gate-interface {
-            background: #2c3e50;
-            border-radius: 15px;
-            padding: 20px;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
             color: white;
-            text-align: center;
-            min-height: 600px;
-            position: relative;
+            font-weight: bold;
+            margin: 5px;
         }
 
-        .camera-view {
-            background: #34495e;
-            border-radius: 10px;
-            height: 200px;
+        .normal { background: #28a745; }
+        .late { background: #ffc107; color: #000; }
+        .lockdown { background: #dc3545; }
+
+        .action-buttons {
+            display: grid;
+            gap: 15px;
             margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #3498db;
-            position: relative;
-            overflow: hidden;
         }
 
-        .camera-placeholder {
-            font-size: 3rem;
-            color: #3498db;
-            animation: scan 3s ease-in-out infinite;
+        .btn {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
         }
 
-        @keyframes scan {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .voice-interface {
-            background: #34495e;
-            border-radius: 10px;
+            background: #f8f9fa;
             padding: 20px;
+            border-radius: 10px;
             margin-bottom: 20px;
-            min-height: 250px;
         }
 
-        .chatbot-display {
-            background: #2c3e50;
-            border-radius: 10px;
-            padding: 15px;
-            height: 200px;
-            overflow-y: auto;
+        .voice-status {
+            text-align: center;
             margin-bottom: 15px;
-            border: 2px solid #3498db;
         }
 
-        .chat-message {
-            margin-bottom: 10px;
-            padding: 8px 12px;
-            border-radius: 10px;
-            max-width: 80%;
-        }
-
-        .bot-message {
-            background: #3498db;
-            color: white;
-            margin-right: auto;
-        }
-
-        .user-message {
-            background: #27ae60;
-            color: white;
-            margin-left: auto;
-            text-align: right;
-        }
-
-        .voice-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-
-        .voice-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .voice-btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        .voice-btn.listening {
-            background: #27ae60;
-            animation: pulse 1s infinite;
-        }
-
-        .voice-btn.processing {
-            background: #f39c12;
-        }
-
-        .security-mode {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .mode-indicator {
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .mode-normal {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .mode-late {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .mode-lockdown {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .emergency-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .emergency-btn:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        /* Resident Dashboard Styles */
-        .auth-section {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .login-form {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .login-form input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-        }
-
-        .login-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .login-btn:hover {
-            background: #2980b9;
-        }
-
-        .dashboard-content {
-            display: none;
-        }
-
-        .dashboard-content.active {
-            display: block;
-        }
-
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .dashboard-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .dashboard-card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .cctv-feed {
-            background: #2c3e50;
-            height: 200px;
-            border-radius: 10px;
+        .listening-indicator {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #dc3545;
+            margin: 0 auto 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
             font-size: 1.5rem;
-            margin-bottom: 15px;
         }
 
-        .visitor-request {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 10px;
+        .listening-indicator.active {
+            background: #28a745;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .conversation-log {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
             padding: 15px;
-            margin-bottom: 15px;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        .system-message {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .user-message {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .login-form {
             display: none;
         }
 
-        .visitor-request.active {
+        .login-form.active {
             display: block;
-            animation: slideIn 0.5s ease-out;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .form-group {
+            margin-bottom: 20px;
         }
 
-        .visitor-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .notification-panel {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .visitor-request {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
             margin-bottom: 15px;
         }
 
         .visitor-photo {
-            width: 60px;
-            height: 60px;
-            background: #3498db;
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .cctv-feed {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
         }
 
-        .visitor-details h4 {
-            margin-bottom: 5px;
-            color: #2c3e50;
-        }
-
-        .visitor-details p {
-            color: #7f8c8d;
-            margin-bottom: 3px;
-        }
-
-        .approval-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .approve-btn, .deny-btn, .intercom-btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .approve-btn {
-            background: #27ae60;
-            color: white;
-        }
-
-        .deny-btn {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .intercom-btn {
-            background: #f39c12;
-            color: white;
-        }
-
-        .recent-entries {
+        .entries-list {
             max-height: 300px;
             overflow-y: auto;
         }
 
         .entry-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             padding: 10px;
-            border-bottom: 1px solid #ecf0f1;
-        }
-
-        .entry-item:last-child {
-            border-bottom: none;
-        }
-
-        .entry-name {
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .entry-time {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: between;
+            align-items: center;
         }
 
         .alert {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
             padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: none;
+            border-radius: 8px;
+            margin-bottom: 15px;
         }
 
-        .alert.show {
-            display: block;
-            animation: slideIn 0.5s ease-out;
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
 
-        .alert.error {
+        .alert-danger {
             background: #f8d7da;
-            border-color: #f5c6cb;
             color: #721c24;
-        }
-
-        .face-detection-status {
-            background: #3498db;
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .face-detection-status.detected {
-            background: #27ae60;
-        }
-
-        .face-detection-status.processing {
-            background: #f39c12;
+            border: 1px solid #f5c6cb;
         }
 
         @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .gate-section {
-                border-right: none;
-                border-bottom: 1px solid #bdc3c7;
-            }
-            
-            .dashboard-grid {
+            .main-interface {
                 grid-template-columns: 1fr;
             }
         }
@@ -487,676 +300,511 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-microphone-alt"></i> Smart Residential Gate Management</h1>
-            <p>ML-Based Voice Chatbot with Facial Recognition</p>
-            <div class="system-status">
-                <div class="status-indicator"></div>
-                <span>System Online</span>
+        <div class="system-header">
+            <h1>Smart Residential Gate Management</h1>
+            <p>ML-Based Visitor Authentication and Access Control</p>
+        </div>
+
+        <div class="main-interface">
+            <!-- Gate Kiosk Panel -->
+            <div class="kiosk-panel">
+                <div class="panel-header">
+                    <h2>🚪 Gate Kiosk Interface</h2>
+                    <p>Voice-Based Interaction System</p>
+                </div>
+
+                <div class="security-status">
+                    <h4>Current Security Mode</h4>
+                    <span class="status-indicator normal" id="securityMode">Normal Hours</span>
+                    <p><small>6 AM - 10 PM: Face Recognition | 10 PM - 6 AM: Face + Voice</small></p>
+                </div>
+
+                <div class="voice-interface">
+                    <div class="voice-status">
+                        <div class="listening-indicator" id="listeningIndicator">🎤</div>
+                        <p id="voiceStatus">Press "Start Conversation" to begin</p>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="startConversation()">Start Conversation</button>
+                        <button class="btn btn-success" onclick="simulateFaceRecognition()">Simulate Face Recognition</button>
+                        <button class="btn btn-danger" onclick="emergencyAccess()">Emergency Access</button>
+                    </div>
+
+                    <div class="conversation-log" id="conversationLog">
+                        <div class="message system-message">System ready. Waiting for visitor...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resident Panel -->
+            <div class="resident-panel">
+                <div class="panel-header">
+                    <h2>🏠 Resident Dashboard</h2>
+                    <p>Visitor Management & Monitoring</p>
+                </div>
+
+                <!-- Login Form -->
+                <div class="login-form active" id="loginForm">
+                    <div class="form-group">
+                        <label for="loginApt">Apartment Number</label>
+                        <input type="text" class="form-control" id="loginApt" placeholder="e.g., A-101" value="A-101">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPass">Password</label>
+                        <input type="password" class="form-control" id="loginPass" placeholder="Enter password" value="demo123">
+                    </div>
+                    <button class="btn btn-primary" onclick="login()">Login</button>
+                    <p><small>Demo: A-101 / demo123 or B-205 / demo123</small></p>
+                </div>
+
+                <!-- Dashboard -->
+                <div class="dashboard" id="dashboard">
+                    <div class="notification-panel" id="notificationPanel" style="display: none;">
+                        <h4>🔔 Visitor Request</h4>
+                        <div id="visitorRequests"></div>
+                    </div>
+
+                    <div class="cctv-feed" id="cctvFeed">
+                        📹 Live CCTV Feed - Gate Camera
+                        <br><small>Click to view full screen</small>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-success" onclick="checkPendingRequests()">Check Visitor Requests</button>
+                        <button class="btn btn-warning" onclick="viewRecentEntries()">Recent Entries</button>
+                        <button class="btn btn-danger" onclick="logout()">Logout</button>
+                    </div>
+
+                    <div class="entries-list" id="entriesList"></div>
+                </div>
             </div>
         </div>
 
-        <div class="main-content">
-            <!-- Gate Voice Interface Section -->
-            <div class="gate-section">
-                <div class="section-title">
-                    <i class="fas fa-robot"></i>
-                    Voice Chatbot Gate Interface
-                </div>
-                
-                <div class="security-mode">
-                    <span>Security Mode:</span>
-                    <span id="securityMode" class="mode-indicator mode-normal">Normal Hours</span>
-                </div>
-
-                <div class="gate-interface">
-                    <div class="camera-view">
-                        <div class="camera-placeholder">
-                            <i class="fas fa-camera"></i>
-                        </div>
-                    </div>
-
-                    <div class="face-detection-status" id="faceStatus">
-                        Waiting for person to approach...
-                    </div>
-
-                    <div class="voice-interface">
-                        <div class="chatbot-display" id="chatDisplay">
-                            <div class="chat-message bot-message">
-                                <i class="fas fa-robot"></i> System ready. Waiting for visitor...
-                            </div>
-                        </div>
-
-                        <div class="voice-controls">
-                            <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">
-                                <i class="fas fa-microphone"></i>
-                                <span id="voiceBtnText">Start Listening</span>
-                            </button>
-                            <button class="voice-btn" onclick="simulatePerson()">
-                                <i class="fas fa-user"></i>
-                                Simulate Person
-                            </button>
-                        </div>
-                    </div>
-
-                    <button class="emergency-btn" onclick="emergencyProtocol()">
-                        <i class="fas fa-ambulance"></i> Emergency Protocol
-                    </button>
-                </div>
-            </div>
-
-            <!-- Resident Dashboard Section -->
-            <div class="resident-section">
-                <div class="section-title">
-                    <i class="fas fa-home"></i>
-                    Resident Dashboard
-                </div>
-
-                <div class="auth-section">
-                    <div id="loginSection">
-                        <h3>Login to Your Account</h3>
-                        <div class="login-form">
-                            <input type="text" id="loginApt" placeholder="Apartment (e.g., A-101)">
-                            <input type="password" id="loginPass" placeholder="Password">
-                            <button class="login-btn" onclick="login()">Login</button>
-                        </div>
-                        <p><small>Demo: Use apartment "A-101" with password "demo123"</small></p>
-                    </div>
-
-                    <div id="dashboardContent" class="dashboard-content">
-                        <div class="alert" id="alertBox"></div>
-                        
-                        <div class="visitor-request" id="visitorRequest">
-                            <h4><i class="fas fa-bell"></i> New Visitor Request</h4>
-                            <div class="visitor-info">
-                                <div class="visitor-photo">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div class="visitor-details">
-                                    <h4 id="requestVisitorName">-</h4>
-                                    <p><strong>Purpose:</strong> <span id="requestPurpose">-</span></p>
-                                    <p><strong>Time:</strong> <span id="requestTime">-</span></p>
-                                    <p><strong>Voice Message:</strong> <span id="requestVoiceMessage">-</span></p>
-                                </div>
-                            </div>
-                            <div class="approval-buttons">
-                                <button class="approve-btn" onclick="approveVisitor()">
-                                    <i class="fas fa-check"></i> Allow
-                                </button>
-                                <button class="intercom-btn" onclick="intercomCall()">
-                                    <i class="fas fa-phone"></i> Voice Call
-                                </button>
-                                <button class="deny-btn" onclick="denyVisitor()">
-                                    <i class="fas fa-times"></i> Deny
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="dashboard-grid">
-                            <div class="dashboard-card">
-                                <h3><i class="fas fa-video"></i> Live Camera Feed</h3>
-                                <div class="cctv-feed">
-                                    <i class="fas fa-eye"></i> Gate Camera Live
-                                </div>
-                                <button onclick="toggleCCTV()" class="login-btn" style="width: 100%;">
-                                    View Full Screen
-                                </button>
-                            </div>
-
-                            <div class="dashboard-card">
-                                <h3><i class="fas fa-history"></i> Recent Entries</h3>
-                                <div class="recent-entries" id="recentEntries">
-                                    <div class="entry-item">
-                                        <div>
-                                            <div class="entry-name">John Smith (A-101)</div>
-                                            <div class="entry-time">Today 09:15 AM - Face Recognition</div>
-                                        </div>
-                                    </div>
-                                    <div class="entry-item">
-                                        <div>
-                                            <div class="entry-name">Pizza Delivery (Voice)</div>
-                                            <div class="entry-time">Yesterday 07:30 PM - Voice Approved</div>
-                                        </div>
-                                    </div>
-                                    <div class="entry-item">
-                                        <div>
-                                            <div class="entry-name">Cleaning Service</div>
-                                            <div class="entry-time">Yesterday 02:00 PM - Pre-authorized</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="alertContainer"></div>
     </div>
 
     <script>
-        // Global state management
+        const API_BASE = '/api';
         let currentUser = null;
-        let securityMode = 'normal';
-        let currentVisitorRequest = null;
-        let isListening = false;
-        let chatbotState = 'idle';
+        let authToken = null;
+        let conversationState = 'idle';
         let currentConversation = {};
 
-        // Chatbot conversation flows
-        const conversations = {
-            visitor: {
-                steps: ['name', 'host', 'purpose', 'confirm'],
-                responses: {
-                    name: "What is your name?",
-                    host: "Who would you like to visit? Please mention apartment number or name.",
-                    purpose: "What is the purpose of your visit?",
-                    confirm: "Thank you! I've captured your photo and details. Sending request to host..."
-                }
-            },
-            delivery: {
-                steps: ['apartments', 'details', 'choice'],
-                responses: {
-                    apartments: "Which apartments are you delivering to?",
-                    details: "What is your name and delivery company?",
-                    choice: "Would you like to wait for approval or use the delivery room?"
-                }
-            },
-            emergency: {
-                steps: ['id_check'],
-                responses: {
-                    id_check: "This is emergency protocol. Please show your ID to the camera."
-                }
-            }
-        };
-
-        // Initialize system
-        function init() {
-            updateSecurityMode();
-            setInterval(updateTime, 1000);
-            simulateMotionDetection();
+        // Voice interaction simulation
+        function addMessage(text, type = 'system') {
+            const log = document.getElementById('conversationLog');
+            const message = document.createElement('div');
+            message.className = `message ${type}-message`;
+            message.textContent = `${new Date().toLocaleTimeString()}: ${text}`;
+            log.appendChild(message);
+            log.scrollTop = log.scrollHeight;
         }
 
-        // Motion simulation for demo
-        function simulateMotionDetection() {
-            setTimeout(() => {
-                if (chatbotState === 'idle') {
-                    detectPerson();
-                }
-            }, Math.random() * 30000 + 10000); // Random 10-40 seconds
-        }
-
-        function detectPerson() {
-            const faceStatus = document.getElementById('faceStatus');
-            faceStatus.textContent = "Person detected - Analyzing face...";
-            faceStatus.className = "face-detection-status processing";
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
             
-            // Simulate face recognition processing
             setTimeout(() => {
-                const isResident = Math.random() > 0.7; // 30% chance it's a resident
-                
-                if (isResident) {
-                    handleResidentEntry();
-                } else {
-                    handleVisitorEntry();
-                }
+                container.removeChild(alert);
+            }, 5000);
+        }
+
+        async function startConversation() {
+            conversationState = 'listening';
+            document.getElementById('listeningIndicator').classList.add('active');
+            document.getElementById('voiceStatus').textContent = 'Listening... Please speak';
+            
+            addMessage("Welcome to Sunrise Apartments! How can I help you today?", "system");
+            
+            // Simulate voice interaction
+            setTimeout(() => {
+                simulateVoiceInput();
             }, 2000);
         }
 
-        function handleResidentEntry() {
-            const faceStatus = document.getElementById('faceStatus');
-            faceStatus.textContent = "Resident identified: John Smith (A-101)";
-            faceStatus.className = "face-detection-status detected";
-            
-            if (securityMode === 'normal') {
-                addChatMessage('bot', "Welcome home, John! Gate opening...");
-                setTimeout(() => {
-                    addChatMessage('bot', "Have a great day!");
-                    resetSystem();
-                }, 2000);
-            } else if (securityMode === 'late') {
-                addChatMessage('bot', "Good evening, John. This is late hour security mode. Please state your apartment number for voice verification.");
-                chatbotState = 'resident_voice_verify';
-            } else {
-                addChatMessage('bot', "Lockdown mode active. Please state your apartment number and PIN for verification.");
-                chatbotState = 'resident_lockdown_verify';
-            }
-        }
-
-        function handleVisitorEntry() {
-            const faceStatus = document.getElementById('faceStatus');
-            faceStatus.textContent = "Unknown person - Photo captured";
-            faceStatus.className = "face-detection-status";
-            
-            addChatMessage('bot', "Welcome to Sunrise Apartments! How can I help you today?");
-            chatbotState = 'waiting_intent';
-            
-            // Auto-start listening for response
-            setTimeout(() => {
-                startListening();
-            }, 1000);
-        }
-
-        function addChatMessage(sender, message) {
-            const chatDisplay = document.getElementById('chatDisplay');
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}-message`;
-            
-            if (sender === 'bot') {
-                messageDiv.innerHTML = `<i class="fas fa-robot"></i> ${message}`;
-                // Simulate text-to-speech
-                speakMessage(message);
-            } else {
-                messageDiv.innerHTML = `<i class="fas fa-user"></i> ${message}`;
-            }
-            
-            chatDisplay.appendChild(messageDiv);
-            chatDisplay.scrollTop = chatDisplay.scrollHeight;
-        }
-
-        function speakMessage(message) {
-            // Simulate speech synthesis (in real implementation, use Web Speech API)
-            console.log("🔊 Speaking:", message);
-            // if ('speechSynthesis' in window) {
-            //     const utterance = new SpeechSynthesisUtterance(message);
-            //     speechSynthesis.speak(utterance);
-            // }
-        }
-
-        function startListening() {
-            if (!isListening) {
-                isListening = true;
-                const voiceBtn = document.getElementById('voiceBtn');
-                const voiceBtnText = document.getElementById('voiceBtnText');
-                
-                voiceBtn.className = "voice-btn listening";
-                voiceBtnText.textContent = "Listening...";
-                
-                // Simulate speech recognition (in real implementation, use Web Speech API)
-                setTimeout(() => {
-                    stopListening();
-                    // Simulate received speech
-                    simulateReceivedSpeech();
-                }, 3000);
-            }
-        }
-
-        function stopListening() {
-            isListening = false;
-            const voiceBtn = document.getElementById('voiceBtn');
-            const voiceBtnText = document.getElementById('voiceBtnText');
-            
-            voiceBtn.className = "voice-btn";
-            voiceBtnText.textContent = "Start Listening";
-        }
-
-        function simulateReceivedSpeech() {
+        function simulateVoiceInput() {
             const responses = [
                 "I want to visit someone",
-                "I have a delivery",
-                "I'm here for maintenance work",
-                "This is an emergency",
-                "I want to meet Mr. Sharma",
-                "Delivery for A-101"
+                "I have a delivery", 
+                "Emergency! I need immediate access",
+                "I'm here to see Mr. Sharma"
             ];
             
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            addChatMessage('user', randomResponse);
-            processVoiceInput(randomResponse);
-        }
-
-        function processVoiceInput(input) {
-            input = input.toLowerCase();
+            const response = responses[Math.floor(Math.random() * responses.length)];
+            addMessage(response, "user");
             
-            switch (chatbotState) {
-                case 'waiting_intent':
-                    classifyIntent(input);
-                    break;
-                case 'visitor_flow':
-                    handleVisitorFlow(input);
-                    break;
-                case 'delivery_flow':
-                    handleDeliveryFlow(input);
-                    break;
-                case 'emergency_flow':
-                    handleEmergencyFlow(input);
-                    break;
-                case 'resident_voice_verify':
-                    handleResidentVoiceVerify(input);
-                    break;
-                case 'resident_lockdown_verify':
-                    handleResidentLockdownVerify(input);
-                    break;
-                default:
-                    addChatMessage('bot', "I didn't understand. Could you please repeat?");
-                    setTimeout(startListening, 1000);
-            }
+            document.getElementById('listeningIndicator').classList.remove('active');
+            document.getElementById('voiceStatus').textContent = 'Processing...';
+            
+            processVoiceCommand(response);
         }
 
-        function classifyIntent(input) {
-            if (input.includes('visit') || input.includes('meet') || input.includes('see')) {
-                startVisitorFlow();
-            } else if (input.includes('delivery') || input.includes('deliver') || input.includes('package')) {
-                startDeliveryFlow();
-            } else if (input.includes('emergency') || input.includes('ambulance') || input.includes('urgent')) {
-                startEmergencyFlow();
-            } else if (input.includes('maintenance') || input.includes('service') || input.includes('repair')) {
-                startServiceFlow();
+        function processVoiceCommand(command) {
+            if (command.includes('visit')) {
+                handleVisitorFlow();
+            } else if (command.includes('delivery')) {
+                handleDeliveryFlow();
+            } else if (command.includes('emergency')) {
+                handleEmergencyFlow();
             } else {
-                addChatMessage('bot', "I didn't understand. Are you here as a visitor, for delivery, emergency, or service?");
-                setTimeout(startListening, 1000);
-            }
-        }
-
-        function startVisitorFlow() {
-            chatbotState = 'visitor_flow';
-            currentConversation = { type: 'visitor', step: 0, data: {} };
-            addChatMessage('bot', conversations.visitor.responses.name);
-            setTimeout(startListening, 1000);
-        }
-
-        function handleVisitorFlow(input) {
-            const step = currentConversation.step;
-            const steps = conversations.visitor.steps;
-            
-            switch (steps[step]) {
-                case 'name':
-                    currentConversation.data.name = input;
-                    currentConversation.step++;
-                    addChatMessage('bot', conversations.visitor.responses.host);
-                    break;
-                case 'host':
-                    currentConversation.data.host = input;
-                    currentConversation.step++;
-                    addChatMessage('bot', conversations.visitor.responses.purpose);
-                    break;
-                case 'purpose':
-                    currentConversation.data.purpose = input;
-                    currentConversation.step++;
-                    const confirmMsg = `Perfect! Let me confirm: ${currentConversation.data.name} visiting ${currentConversation.data.host} for ${currentConversation.data.purpose}. Is this correct?`;
-                    addChatMessage('bot', confirmMsg);
-                    break;
-                case 'confirm':
-                    if (input.includes('yes') || input.includes('correct') || input.includes('right')) {
-                        sendVisitorRequest();
-                    } else {
-                        addChatMessage('bot', "Let me start over. What is your name?");
-                        currentConversation = { type: 'visitor', step: 0, data: {} };
-                    }
-                    break;
-            }
-            
-            if (currentConversation.step < steps.length) {
-                setTimeout(startListening, 1000);
-            }
-        }
-
-        function startDeliveryFlow() {
-            chatbotState = 'delivery_flow';
-            currentConversation = { type: 'delivery', step: 0, data: {} };
-            addChatMessage('bot', conversations.delivery.responses.apartments);
-            setTimeout(startListening, 1000);
-        }
-
-        function handleDeliveryFlow(input) {
-            const step = currentConversation.step;
-            const steps = conversations.delivery.steps;
-            
-            switch (steps[step]) {
-                case 'apartments':
-                    currentConversation.data.apartments = input;
-                    currentConversation.step++;
-                    addChatMessage('bot', conversations.delivery.responses.details);
-                    break;
-                case 'details':
-                    currentConversation.data.details = input;
-                    currentConversation.step++;
-                    addChatMessage('bot', "Would you like to wait for approval or use the delivery room? Say 'wait' or 'delivery room'.");
-                    break;
-                case 'choice':
-                    if (input.includes('wait') || input.includes('approval')) {
-                        sendDeliveryRequest();
-                    } else {
-                        useDeliveryRoom();
-                    }
-                    break;
-            }
-            
-            if (currentConversation.step < steps.length) {
-                setTimeout(startListening, 1000);
-            }
-        }
-
-        function startEmergencyFlow() {
-            chatbotState = 'emergency_flow';
-            addChatMessage('bot', "Emergency protocol activated. Please show your official ID to the camera for verification.");
-            
-            setTimeout(() => {
-                addChatMessage('bot', "ID verification successful. Emergency access granted. All residents have been notified. Gate opening now.");
-                if (currentUser) {
-                    showAlert('🚨 EMERGENCY: Emergency services have entered the property', 'error');
-                }
-                setTimeout(resetSystem, 3000);
-            }, 3000);
-        }
-
-        function startServiceFlow() {
-            addChatMessage('bot', "Are you a regular pre-authorized service worker or occasional service? Say 'regular' or 'occasional'.");
-            chatbotState = 'service_flow';
-            setTimeout(startListening, 1000);
-        }
-
-        function handleResidentVoiceVerify(input) {
-            if (input.includes('a-101') || input.includes('a 101')) {
-                addChatMessage('bot', "Voice verification successful. Welcome home, John!");
+                addMessage("I understand you want to visit someone. What is your name?", "system");
                 setTimeout(() => {
-                    addChatMessage('bot', "Gate opening. Have a good evening!");
-                    resetSystem();
-                }, 2000);
-            } else {
-                addChatMessage('bot', "Voice verification failed. Please try again or contact security.");
-                setTimeout(resetSystem, 3000);
+                    addMessage("Raj Kumar", "user");
+                    continueVisitorFlow();
+                }, 1500);
             }
         }
 
-        function handleResidentLockdownVerify(input) {
-            if (input.includes('a-101') && input.includes('1234')) {
-                addChatMessage('bot', "Lockdown verification successful. Access granted.");
-                setTimeout(resetSystem, 2000);
-            } else {
-                addChatMessage('bot', "Verification failed. Please ensure you state both apartment number and PIN clearly.");
-                setTimeout(startListening, 1000);
-            }
-        }
-
-        function sendVisitorRequest() {
-            const data = currentConversation.data;
-            addChatMessage('bot', `Thank you ${data.name}! I've sent your request to ${data.host}. Please wait up to 20 minutes for response.`);
-            
-            // Send to resident dashboard if logged in
-            if (currentUser && data.host.includes(currentUser.apartment)) {
-                showVisitorRequest({
-                    name: data.name,
-                    purpose: data.purpose,
-                    time: new Date().toLocaleTimeString(),
-                    voiceMessage: `"${data.name} wants to visit for ${data.purpose}"`
-                });
-            }
-            
-            setTimeout(resetSystem, 5000);
-        }
-
-        function sendDeliveryRequest() {
-            const data = currentConversation.data;
-            addChatMessage('bot', `Delivery request sent to ${data.apartments}. Please wait for approval.`);
-            setTimeout(resetSystem, 5000);
-        }
-
-        function useDeliveryRoom() {
-            addChatMessage('bot', "Generating QR code for delivery room access...");
+        function handleVisitorFlow() {
+            addMessage("What is your name?", "system");
             setTimeout(() => {
-                addChatMessage('bot', "QR code printed! Please attach sticker to packages and proceed to delivery room. Thank you!");
-                resetSystem();
+                addMessage("Raj Kumar", "user");
+                setTimeout(() => {
+                    addMessage("Who would you like to visit? Please mention apartment number.", "system");
+                    setTimeout(() => {
+                        addMessage("Mr. Sharma in A-101", "user");
+                        continueVisitorFlow();
+                    }, 1500);
+                }, 1500);
+            }, 1500);
+        }
+
+        function continueVisitorFlow() {
+            setTimeout(() => {
+                addMessage("What is the purpose of your visit?", "system");
+                setTimeout(() => {
+                    addMessage("Personal visit", "user");
+                    setTimeout(() => {
+                        addMessage("Thank you Raj. I'm taking your photo and sending request to A-101. Please wait.", "system");
+                        submitVisitorRequest();
+                    }, 1500);
+                }, 1500);
+            }, 1500);
+        }
+
+        function handleDeliveryFlow() {
+            addMessage("Which apartments are you delivering to?", "system");
+            setTimeout(() => {
+                addMessage("A-101 and B-205", "user");
+                setTimeout(() => {
+                    addMessage("What is your name and company?", "system");
+                    setTimeout(() => {
+                        addMessage("I'm Ravi from Swiggy", "user");
+                        setTimeout(() => {
+                            addMessage("Would you like to wait for approval or use delivery room?", "system");
+                            setTimeout(() => {
+                                addMessage("Delivery room please", "user");
+                                addMessage("QR code printed! Please attach to packages and proceed to delivery room.", "system");
+                            }, 1500);
+                        }, 1500);
+                    }, 1500);
+                }, 1500);
+            }, 1500);
+        }
+
+        function handleEmergencyFlow() {
+            addMessage("Emergency protocol activated. Please show ID to camera.", "system");
+            setTimeout(() => {
+                addMessage("Emergency access granted. All residents notified. Gate opening now.", "system");
+                emergencyAccess();
             }, 2000);
         }
 
-        function resetSystem() {
-            chatbotState = 'idle';
-            currentConversation = {};
-            const faceStatus = document.getElementById('faceStatus');
-            faceStatus.textContent = "Waiting for person to approach...";
-            faceStatus.className = "face-detection-status";
+        async function submitVisitorRequest() {
+            try {
+                const response = await fetch(`${API_BASE}/visitor-request`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: 'Raj Kumar',
+                        host_apartment: 'A-101',
+                        purpose: 'Personal visit'
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    checkPendingRequestsAuto();
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Visitor request sent successfully (demo mode)', 'success');
+            }
             
+            document.getElementById('voiceStatus').textContent = 'Conversation complete';
+            conversationState = 'idle';
+        }
+
+        async function simulateFaceRecognition() {
+            document.getElementById('voiceStatus').textContent = 'Scanning face...';
+            addMessage("Face detected. Processing recognition...", "system");
+            
+            try {
+                const response = await fetch(`${API_BASE}/face-recognition`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    addMessage(`Welcome home, ${data.resident.name}`, "system");
+                    showAlert(`Gate opened for ${data.resident.name}`, 'success');
+                } else {
+                    addMessage("Face not recognized. Please use visitor process.", "system");
+                }
+            } catch (error) {
+                // Demo mode
+                const residents = ['John Sharma (A-101)', 'Priya Patel (B-205)'];
+                const resident = residents[Math.floor(Math.random() * residents.length)];
+                addMessage(`Welcome home, ${resident}`, "system");
+                showAlert(`Gate opened for ${resident}`, 'success');
+            }
+            
+            document.getElementById('voiceStatus').textContent = 'Ready for next person';
+        }
+
+        async function emergencyAccess() {
+            addMessage("🚨 EMERGENCY ACCESS ACTIVATED", "system");
+            
+            try {
+                const response = await fetch(`${API_BASE}/emergency-access`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        service_type: 'Ambulance',
+                        details: 'Medical emergency'
+                    })
+                });
+                
+                const data = await response.json();
+                showAlert('🚨 Emergency access granted - All residents alerted', 'danger');
+            } catch (error) {
+                showAlert('🚨 Emergency access granted - All residents alerted', 'danger');
+            }
+        }
+
+        // Resident Dashboard Functions
+        async function login() {
+            const apartment = document.getElementById('loginApt').value;
+            const password = document.getElementById('loginPass').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ apartment, password })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    currentUser = data.user;
+                    authToken = data.token;
+                    localStorage.setItem('authToken', authToken);
+                    showDashboard();
+                    showAlert(`Welcome, ${data.user.name}!`, 'success');
+                    checkPendingRequestsAuto();
+                } else {
+                    showAlert('Invalid credentials', 'danger');
+                }
+            } catch (error) {
+                // Demo mode
+                if (apartment === 'A-101' && password === 'demo123') {
+                    currentUser = { apartment: 'A-101', name: 'John Sharma' };
+                    showDashboard();
+                    showAlert('Welcome, John Sharma! (Demo Mode)', 'success');
+                    checkPendingRequestsAuto();
+                } else if (apartment === 'B-205' && password === 'demo123') {
+                    currentUser = { apartment: 'B-205', name: 'Priya Patel' };
+                    showDashboard();
+                    showAlert('Welcome, Priya Patel! (Demo Mode)', 'success');
+                } else {
+                    showAlert('Invalid credentials. Try A-101/demo123', 'danger');
+                }
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginForm').classList.remove('active');
+            document.getElementById('dashboard').classList.add('active');
+        }
+
+        function logout() {
+            currentUser = null;
+            authToken = null;
+            localStorage.removeItem('authToken');
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('loginForm').classList.add('active');
+            document.getElementById('notificationPanel').style.display = 'none';
+            showAlert('Logged out successfully', 'success');
+        }
+
+        async function checkPendingRequests() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/pending-requests/${currentUser.apartment}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                if (data.success && data.requests.length > 0) {
+                    displayVisitorRequests(data.requests);
+                } else {
+                    showAlert('No pending visitor requests', 'success');
+                }
+            } catch (error) {
+                // Demo mode - simulate pending request
+                if (Math.random() > 0.5) {
+                    displayVisitorRequests([{
+                        id: 1,
+                        visitor_name: 'Raj Kumar',
+                        purpose: 'Personal visit',
+                        photo: 'demo_visitor.jpg'
+                    }]);
+                } else {
+                    showAlert('No pending visitor requests', 'success');
+                }
+            }
+        }
+
+        function checkPendingRequestsAuto() {
+            setTimeout(checkPendingRequests, 2000);
+        }
+
+        function displayVisitorRequests(requests) {
+            const panel = document.getElementById('notificationPanel');
+            const container = document.getElementById('visitorRequests');
+            
+            container.innerHTML = '';
+            requests.forEach(request => {
+                const requestDiv = document.createElement('div');
+                requestDiv.className = 'visitor-request';
+                requestDiv.innerHTML = `
+                    <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                        <div style="width: 60px; height: 60px; background: #ddd; border-radius: 50%; margin-right: 15px; display: flex; align-items: center; justify-content: center;">📷</div>
+                        <div>
+                            <h5>${request.visitor_name}</h5>
+                            <p>Purpose: ${request.purpose}</p>
+                            <small>Waiting for approval...</small>
+                        </div>
+                    </div>
+                    <div class="action-buttons" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                        <button class="btn btn-success" onclick="approveVisitor(${request.id}, true)">Approve</button>
+                        <button class="btn btn-warning" onclick="startIntercom()">Intercom</button>
+                        <button class="btn btn-danger" onclick="approveVisitor(${request.id}, false)">Deny</button>
+                    </div>
+                `;
+                container.appendChild(requestDiv);
+            });
+            
+            panel.style.display = 'block';
+        }
+
+        async function approveVisitor(visitorId, approved) {
+            try {
+                const response = await fetch(`${API_BASE}/approve-visitor`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify({ visitor_id: visitorId, approved })
+                });
+                
+                const data = await response.json();
+                showAlert(data.message, approved ? 'success' : 'danger');
+                document.getElementById('notificationPanel').style.display = 'none';
+            } catch (error) {
+                const message = approved ? 'Visitor approved! Gate opening.' : 'Visitor denied.';
+                showAlert(message, approved ? 'success' : 'danger');
+                document.getElementById('notificationPanel').style.display = 'none';
+            }
+        }
+
+        function startIntercom() {
+            showAlert('🎤 Intercom connected. You can now speak with the visitor.', 'warning');
             setTimeout(() => {
-                document.getElementById('chatDisplay').innerHTML = '<div class="chat-message bot-message"><i class="fas fa-robot"></i> System ready. Waiting for visitor...</div>';
-                simulateMotionDetection();
-            }, 3000);
+                showAlert('Intercom ended.', 'success');
+            }, 5000);
         }
 
-        function toggleVoice() {
-            if (isListening) {
-                stopListening();
-            } else {
-                startListening();
+        async function viewRecentEntries() {
+            if (!currentUser) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}/recent-entries/${currentUser.apartment}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                
+                const data = await response.json();
+                displayRecentEntries(data.entries || []);
+            } catch (error) {
+                // Demo data
+                const demoEntries = [
+                    { name: 'Raj Kumar', purpose: 'Personal visit', time: '2024-01-15 14:30', status: 'approved' },
+                    { name: 'Swiggy Delivery', purpose: 'Food delivery', time: '2024-01-15 12:15', status: 'delivered' },
+                    { name: 'Amazon Delivery', purpose: 'Package delivery', time: '2024-01-14 16:45', status: 'delivery_room' }
+                ];
+                displayRecentEntries(demoEntries);
             }
         }
 
-        function simulatePerson() {
-            if (chatbotState === 'idle') {
-                detectPerson();
-            } else {
-                showAlert('System is currently busy with another visitor.', 'error');
+        function displayRecentEntries(entries) {
+            const container = document.getElementById('entriesList');
+            container.innerHTML = '<h4>Recent Entries</h4>';
+            
+            if (entries.length === 0) {
+                container.innerHTML += '<p>No recent entries found.</p>';
+                return;
             }
+            
+            entries.forEach(entry => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'entry-item';
+                entryDiv.innerHTML = `
+                    <div>
+                        <strong>${entry.name}</strong><br>
+                        <small>${entry.purpose} • ${entry.time}</small>
+                    </div>
+                    <div>
+                        <span class="status-indicator ${entry.status}">${entry.status.toUpperCase()}</span>
+                    </div>
+                `;
+                container.appendChild(entryDiv);
+            });
         }
 
-        function emergencyProtocol() {
-            chatbotState = 'emergency_flow';
-            addChatMessage('bot', "🚨 EMERGENCY PROTOCOL ACTIVATED 🚨");
-            startEmergencyFlow();
-        }
-
-        // Security mode management
+        // Initialize system
         function updateSecurityMode() {
             const hour = new Date().getHours();
             const modeElement = document.getElementById('securityMode');
             
             if (hour >= 22 || hour < 6) {
-                securityMode = 'late';
                 modeElement.textContent = 'Late Hours';
-                modeElement.className = 'mode-indicator mode-late';
+                modeElement.className = 'status-indicator late';
             } else {
-                securityMode = 'normal';
                 modeElement.textContent = 'Normal Hours';
-                modeElement.className = 'mode-indicator mode-normal';
+                modeElement.className = 'status-indicator normal';
             }
         }
 
-        // Resident dashboard functions
-        function login() {
-            const apt = document.getElementById('loginApt').value;
-            const pass = document.getElementById('loginPass').value;
-            
-            if (apt === 'A-101' && pass === 'demo123') {
-                currentUser = { apartment: apt, name: 'John Smith' };
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboardContent').classList.add('active');
-                showAlert('Welcome back, ' + currentUser.name + '!', 'success');
-            } else {
-                showAlert('Invalid credentials. Use A-101 / demo123 for demo.', 'error');
-            }
-        }
-
-        function showVisitorRequest(request) {
-            document.getElementById('requestVisitorName').textContent = request.name;
-            document.getElementById('requestPurpose').textContent = request.purpose;
-            document.getElementById('requestTime').textContent = request.time;
-            document.getElementById('requestVoiceMessage').textContent = request.voiceMessage;
-            document.getElementById('visitorRequest').classList.add('active');
-            
-            showAlert('🔔 New visitor request received!', 'success');
-        }
-
-        function approveVisitor() {
-            if (currentUser) {
-                showAlert('✅ Visitor approved! Gate unlocking...', 'success');
-                document.getElementById('visitorRequest').classList.remove('active');
-                
-                // Add to recent entries
-                addRecentEntry('Voice Visitor (Approved)', 'Just now');
-                
-                // Send response to gate
-                addChatMessage('bot', `Great news! ${currentUser.name} has approved your visit. Gate opening now!`);
-            }
-        }
-
-        function denyVisitor() {
-            if (currentUser) {
-                showAlert('❌ Visitor request denied.', 'error');
-                document.getElementById('visitorRequest').classList.remove('active');
-                
-                // Send response to gate
-                addChatMessage('bot', 'Sorry, your visit request was declined. Thank you for visiting.');
-            }
-        }
-
-        function intercomCall() {
-            showAlert('📞 Voice call initiated. You can now speak with the visitor.', 'success');
-            addChatMessage('bot', `${currentUser.name} wants to speak with you. You are now connected.`);
-            
-            setTimeout(() => {
-                addChatMessage('user', 'Hello, this is regarding the project discussion we planned.');
-                showAlert('🎤 Visitor: "Hello, this is regarding the project discussion we planned."', 'success');
-            }, 2000);
-        }
-
-        function addRecentEntry(name, time) {
-            const entriesContainer = document.getElementById('recentEntries');
-            const newEntry = document.createElement('div');
-            newEntry.className = 'entry-item';
-            newEntry.innerHTML = `
-                <div>
-                    <div class="entry-name">${name}</div>
-                    <div class="entry-time">${time}</div>
-                </div>
-            `;
-            entriesContainer.insertBefore(newEntry, entriesContainer.firstChild);
-        }
-
-        function toggleCCTV() {
-            showAlert('📹 CCTV feed would open in full screen mode.', 'success');
-        }
-
-        function showAlert(message, type = 'success') {
-            const alertBox = document.getElementById('alertBox');
-            alertBox.textContent = message;
-            alertBox.className = `alert show ${type === 'error' ? 'error' : ''}`;
-            
-            setTimeout(() => {
-                alertBox.classList.remove('show');
-            }, 5000);
-        }
-
-        function updateTime() {
+        // Auto-login if token exists
+        window.onload = function() {
             updateSecurityMode();
-        }
-
-        // Initialize the application
-        init();
-
-        // Demo scenarios
-        setTimeout(() => {
-            if (!currentUser) {
-                showAlert('💡 Tip: Login with apartment "A-101" and password "demo123" to see the resident dashboard.', 'success');
+            setInterval(updateSecurityMode, 60000); // Update every minute
+            
+            const savedToken = localStorage.getItem('authToken');
+            if (savedToken) {
+                authToken = savedToken;
+                // Auto-login demo user
+                currentUser = { apartment: 'A-101', name: 'John Sharma' };
+                showDashboard();
             }
-        }, 3000);
-
-        // Simulate pre-authorized visitor after login
-        setTimeout(() => {
-            if (currentUser) {
-                addChatMessage('bot', 'Pre-approved visitor "Sarah Johnson" entered using facial recognition.');
-                addRecentEntry('Sarah Johnson (Pre-approved)', 'Just now');
-                showAlert('✅ Pre-approved visitor entered using facial recognition.', 'success');
-            }
-        }, 15000);
+        };
     </script>
 </body>
 </html>
